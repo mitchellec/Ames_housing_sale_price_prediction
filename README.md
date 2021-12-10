@@ -43,7 +43,7 @@ __Summary of problem statement__<br>
 - To explore and analyse the dataset to develop a model (with lowest RMSE) that predicts the housing sale price in Ames, Iowa.
 - Using the model built, identify the top 3 features that will increase the sale price and identify 3 features that will lead to a decrease in the sale price.
 
-__Report__<br>
+### Report
 This report is prepared for our management as we report back on the task assigned to us.
 
 ---
@@ -237,9 +237,15 @@ Regression Models created:
 
 ## External Research
 
-__Why do we log target variable?__
-https://scikit-learn.org/stable/auto_examples/compose/plot_transformed_target.html
+__Why do we log transform target variable?__<br>
+Link: https://scikit-learn.org/stable/auto_examples/compose/plot_transformed_target.html
 
+We see that for datasets that looks to follow a normal distribution but is skewed, by performing log transformation, the transformed dataset will look to follow a normal distribution.
+
+__Interpreting log-transformed variable__<br>
+Link: https://stats.idre.ucla.edu/sas/faq/how-can-i-interpret-log-transformed-variables-in-terms-of-percent-change-in-linear-regression/
+
+When we log transformed the target variable, we will need to exponentiate back the coefficients obtained to see the total percentage of the feature affecting on the target variable. A much easier way to interpret this percentage is to subtract `1.0` from the calculated value and multiplied by `100`.
 
 ---
 
@@ -265,15 +271,73 @@ For features that had high positive correlation, it made sense that they are the
 
 With this thinking, it would not make sense for the features that had negative correlation as people would assume higher (better) ratings of the house would mean there is an increase in the sale price.
 
-### Modeling
-
-
 
 ### Kaggle Submission Score
 
 Snapshot from kaggle:
 
 <img src='./images/kaggle_submission.png' width=800px />
+
+### Conclusion of model
+
+Lasso and Elastic Net model have similar performance metrics.
+
+| Model | Data | RMSE for log(SalePrice)| RMSE for SalePrice |
+|-|-|-|-|
+| Lasso Regression | X_train, y_train | 0.10741568896823879 | 19725.735394981446 |
+| Lasso Regression | X_test, y_test |  0.14094653846561794 | 19694.806148270756 |
+| Elastic Net Regression | X_train, y_train | 0.10746614152055681 | 19190.636599824727 |
+| Elastic Net Regression | X_test, y_test |  0.14094399430822652 | 19250.63157811811 |
+
+When uploaded into kaggle, we notice that elastic net had a much better performance (difference of more than 400) even though the difference in our training and testing data were very close to each other (difference within 100).
+
+Recalling our problem statement, we were expected to develop a model that predicts the housing sale price in Ames, Iowa. <br>
+Our conclusion is the __Elastic Net model__ is the better model at prediciting the Sale Price.
+
+### Recommendations
+
+<img src='./images/barplot.png' width=800px />
+
+From the above plot, we see that `Overall_Qual`, `Total_house_SF`, `Gr_Liv_Area`, `Overall_Cond` and `BsmtFin_SF_1` ranks top 5 in terms of increaing the Sale Price.
+
+| 	    feature	 | 	Coef	 | 	exp(Coef)	 | 	Percentage_SalePrice	 |
+|-|-|-|-|
+| 	Overall_Qual	 | 	0.090259	 | 	1.094458	 | 	9.445785	 |
+| 	Total_house_SF	 | 	0.083487	 | 	1.087071	 | 	8.707079	 |
+| 	Gr_Liv_Area	 | 	0.065542	 | 	1.067738	 | 	6.773757	 |
+| 	Overall_Cond	 | 	0.034509	 | 	1.035112	 | 	3.511181	 |
+| 	BsmtFin_SF_1	 | 	0.03036	 | 	1.030825	 | 	3.082531	 |
+
+We also see that `house_age`, `Exter_Cond_Po`, `remod_house_age`, `Heating_Grav` and `Heating_QC_TA` ranks top 5 in terms of decreasing the housing price.
+
+| 	    feature	 | 	Coef	 | 	exp(Coef)	 | 	Percentage_SalePrice	 |
+|-|-|-|-|
+| 	house_age	 | 	-0.050157	 | 	0.95108	 | 	-4.892013	 |
+| 	Exter_Cond_Po	 | 	-0.021798	 | 	0.978438	 | 	-2.156218	 |
+| 	remod_house_age	 | 	-0.017734	 | 	0.982422	 | 	-1.757775	 |
+| 	Heating_Grav	 | 	-0.012677	 | 	0.987403	 | 	-1.259712	 |
+| 	Heating_QC_TA	 | 	-0.012383	 | 	0.987694	 | 	-1.230635	 |
+
+The column `Percentage_SalePrice` shows a one unit increase in the feature will lead to the percentage reflected change in house Sale Price. Taking an example from both categories, we see
+1. for a unit increase in `Overall_Qual` will have a estimated of 9.45% __increase__ in the house Sale Price; and
+2. for a unit increase in `house_age`, it will lead to an estimated of 4.89% __decrease__ in the house Sale Price.
+
+We also note that the model has taken into consideration of 75 out of 219 features.
+
+#### Further recommendations
+Based on our findings above, to increase Sale Price, we will recommend taking the following actions
+
+| 	feature	 | 	Description	 | 	Percentage_SalePrice	 | 	Action	 |
+|-|-|-|-|
+| 	Overall_Qual	 | 	Rates the overall material and finish of the house	 | 	9.445785	 | 	Repair and painting works	 |
+| 	Gr_Liv_Area	 | 	Above grade (ground) living area square feet	 | 	6.773757	 | 	Repair or renovation works	 |
+| 	BsmtFin_SF_1	 | 	Type 1 finished square feet	 | 	3.082531	 | 	renovation works	 |
+
+#### Ways to improve model
+
+To further improve the model developed, we can take the following steps:
+1. Improve the way outlier is identified
+2. Identify more features that should be considered together and not seperately based on response on ground
 
 ---
 
@@ -282,4 +346,5 @@ Snapshot from kaggle:
 2. Introduction of Ames, Iowa, United States - https://en.wikipedia.org/wiki/Ames,_Iowa
 3. City of Ames - https://www.cityofames.org/
 4. Log target variable - https://scikit-learn.org/stable/auto_examples/compose/plot_transformed_target.html
+5. Explaination on log transformed variables - https://stats.idre.ucla.edu/sas/faq/how-can-i-interpret-log-transformed-variables-in-terms-of-percent-change-in-linear-regression/
 ---
